@@ -35,6 +35,13 @@
     "mocha": "./bin/mocha.js",
     "_mocha": "./bin/_mocha"
   },
+  "exports": {
+    ".": {
+      "import": "./mocha.mjs",
+      "require": "./index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "directories": {
     "lib": "./lib",
     "test": "./test"

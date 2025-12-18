@@ -1,40 +1,85 @@
-// this built file is not committed to the repo
-/* eslint-disable-next-line n/no-missing-import */
-import "./mocha.js";
+/**
+ * ESM wrapper for Mocha
+ *
+ * This module provides ESM exports for both Node.js and browser environments.
+ * - In Node.js: imports the CommonJS entry point  
+ * - In browser: imports the built mocha.js bundle and exports from the global mocha instance
+ */
 
-const { mocha } = globalThis;
+// Check if we're in a browser environment
+const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
-mocha.ui();
+let Mocha;
+let mochaExports;
 
-const after = globalThis.after.bind(mocha);
-const afterEach = globalThis.afterEach.bind(mocha);
-const before = globalThis.before.bind(mocha);
-const beforeEach = globalThis.beforeEach.bind(mocha);
-const context = globalThis.context.bind(mocha);
-const describe = globalThis.describe.bind(mocha);
-const it = globalThis.it.bind(mocha);
-const specify = globalThis.specify.bind(mocha);
-const xcontext = globalThis.xcontext.bind(mocha);
-const xdescribe = globalThis.xdescribe.bind(mocha);
-const xit = globalThis.xit.bind(mocha);
-const xspecify = globalThis.xspecify.bind(mocha);
+if (isBrowser) {
+  // Browser: import the built bundle which sets up globalThis.Mocha and globalThis.mocha
+  await import('./mocha.js');
+  
+  Mocha = globalThis.Mocha;
+  // The global mocha instance is created by the bundle with ui() already called
+  const mochaInstance = globalThis.mocha;
+  
+  // Initialize the UI to set up the context
+  mochaInstance.ui('bdd');
+  
+  // Now export the test functions from the global scope (they're set up by ui())
+  mochaExports = {
+    afterEach: globalThis.afterEach,
+    after: globalThis.after,
+    beforeEach: globalThis.beforeEach,
+    before: globalThis.before,
+    describe: globalThis.describe,
+    it: globalThis.it,
+    xdescribe: globalThis.xdescribe,
+    xit: globalThis.xit,
+    setup: globalThis.setup,
+    suiteSetup: globalThis.suiteSetup,
+    suiteTeardown: globalThis.suiteTeardown,
+    suite: globalThis.suite,
+    teardown: globalThis.teardown,
+    test: globalThis.test,
+    run: mochaInstance.run.bind(mochaInstance)
+  };
+} else {
+  // Node.js: use createRequire to load CommonJS module
+  const { createRequire } = await import('node:module');
+  const require = createRequire(import.meta.url);
+  Mocha = require('./index.js');
+  mochaExports = Mocha;
+}
 
-const run = mocha.run.bind(mocha);
-const setup = mocha.setup.bind(mocha);
+// Re-export the Mocha class as default export
+export default Mocha;
 
-export {
-  after,
+// Re-export class/utility exports from the Mocha module
+export const {
+  utils,
+  interfaces,
+  reporters,
+  Runnable,
+  Context,
+  Runner,
+  Suite,
+  Hook,
+  Test
+} = Mocha;
+
+// Re-export test interface functions
+export const {
   afterEach,
-  before,
+  after,
   beforeEach,
-  context,
+  before,
   describe,
   it,
-  run,
-  setup,
-  specify,
-  xcontext,
   xdescribe,
   xit,
-  xspecify,
-};
+  setup,
+  suiteSetup,
+  suiteTeardown,
+  suite,
+  teardown,
+  test,
+  run
+} = mochaExports;

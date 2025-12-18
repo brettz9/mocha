@@ -2,8 +2,6 @@
 docs/_site
 docs/images/supporters
 docs/api
-mocha.js
-mocha.js.map
 .karma/
 !bin/mocha.js
 !lib/mocha.js

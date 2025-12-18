@@ -2,7 +2,7 @@
  * ESM wrapper for Mocha
  *
  * This module provides ESM exports for both Node.js and browser environments.
- * - In Node.js: imports the CommonJS entry point  
+ * - In Node.js: imports the CommonJS entry point
  * - In browser: imports the built mocha.js bundle and exports from the global mocha instance
  */
 
@@ -15,30 +15,31 @@ let mochaExports;
 if (isBrowser) {
   // Browser: import the built bundle which sets up globalThis.Mocha and globalThis.mocha
   await import('./mocha.js');
-  
+
   Mocha = globalThis.Mocha;
-  // The global mocha instance is created by the bundle with ui() already called
   const mochaInstance = globalThis.mocha;
-  
-  // Initialize the UI to set up the context
-  mochaInstance.ui('bdd');
-  
-  // Now export the test functions from the global scope (they're set up by ui())
+
+  // Don't call ui() here - let users call mocha.setup() to choose their interface
+  // Export functions that dynamically reference globalThis so they work after setup()
   mochaExports = {
-    afterEach: globalThis.afterEach,
-    after: globalThis.after,
-    beforeEach: globalThis.beforeEach,
-    before: globalThis.before,
-    describe: globalThis.describe,
-    it: globalThis.it,
-    xdescribe: globalThis.xdescribe,
-    xit: globalThis.xit,
-    setup: globalThis.setup,
-    suiteSetup: globalThis.suiteSetup,
-    suiteTeardown: globalThis.suiteTeardown,
-    suite: globalThis.suite,
-    teardown: globalThis.teardown,
-    test: globalThis.test,
+    get afterEach() { return globalThis.afterEach; },
+    get after() { return globalThis.after; },
+    get beforeEach() { return globalThis.beforeEach; },
+    get before() { return globalThis.before; },
+    get describe() { return globalThis.describe; },
+    get it() { return globalThis.it; },
+    get xdescribe() { return globalThis.xdescribe; },
+    get xit() { return globalThis.xit; },
+    get setup() { return globalThis.setup; },
+    get suiteSetup() { return globalThis.suiteSetup; },
+    get suiteTeardown() { return globalThis.suiteTeardown; },
+    get suite() { return globalThis.suite; },
+    get teardown() { return globalThis.teardown; },
+    get test() { return globalThis.test; },
+    get xspecify() { return globalThis.xspecify; },
+    get specify() { return globalThis.specify; },
+    get context() { return globalThis.context; },
+    get xcontext() { return globalThis.xcontext; },
     run: mochaInstance.run.bind(mochaInstance)
   };
 } else {
@@ -81,5 +82,9 @@ export const {
   suite,
   teardown,
   test,
+  xspecify,
+  specify,
+  context,
+  xcontext,
   run
 } = mochaExports;

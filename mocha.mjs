@@ -11,36 +11,37 @@ const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'u
 
 let Mocha;
 let mochaExports;
+let mocha;
 
 if (isBrowser) {
   // Browser: import the built bundle which sets up globalThis.Mocha and globalThis.mocha
   await import('./mocha.js');
 
   Mocha = globalThis.Mocha;
-  const mochaInstance = globalThis.mocha;
+  mocha = globalThis.mocha;
 
-  // Don't call ui() here - let users call mocha.setup() to choose their interface
-  // Export functions that dynamically reference globalThis so they work after setup()
+  // Don't call setup() - let users choose their interface
+  // Export wrapper functions that dynamically access globalThis
   mochaExports = {
-    get afterEach() { return globalThis.afterEach; },
-    get after() { return globalThis.after; },
-    get beforeEach() { return globalThis.beforeEach; },
-    get before() { return globalThis.before; },
-    get describe() { return globalThis.describe; },
-    get it() { return globalThis.it; },
-    get xdescribe() { return globalThis.xdescribe; },
-    get xit() { return globalThis.xit; },
-    get setup() { return globalThis.setup; },
-    get suiteSetup() { return globalThis.suiteSetup; },
-    get suiteTeardown() { return globalThis.suiteTeardown; },
-    get suite() { return globalThis.suite; },
-    get teardown() { return globalThis.teardown; },
-    get test() { return globalThis.test; },
-    get xspecify() { return globalThis.xspecify; },
-    get specify() { return globalThis.specify; },
-    get context() { return globalThis.context; },
-    get xcontext() { return globalThis.xcontext; },
-    run: mochaInstance.run.bind(mochaInstance)
+    afterEach: (...args) => globalThis.afterEach?.(...args),
+    after: (...args) => globalThis.after?.(...args),
+    beforeEach: (...args) => globalThis.beforeEach?.(...args),
+    before: (...args) => globalThis.before?.(...args),
+    describe: (...args) => globalThis.describe?.(...args),
+    it: (...args) => globalThis.it?.(...args),
+    xdescribe: (...args) => globalThis.xdescribe?.(...args),
+    xit: (...args) => globalThis.xit?.(...args),
+    setup: (...args) => globalThis.setup?.(...args),
+    suiteSetup: (...args) => globalThis.suiteSetup?.(...args),
+    suiteTeardown: (...args) => globalThis.suiteTeardown?.(...args),
+    suite: (...args) => globalThis.suite?.(...args),
+    teardown: (...args) => globalThis.teardown?.(...args),
+    test: (...args) => globalThis.test?.(...args),
+    xspecify: (...args) => globalThis.xspecify?.(...args),
+    specify: (...args) => globalThis.specify?.(...args),
+    context: (...args) => globalThis.context?.(...args),
+    xcontext: (...args) => globalThis.xcontext?.(...args),
+    run: mocha.run.bind(mocha)
   };
 } else {
   // Node.js: use createRequire to load CommonJS module
@@ -52,6 +53,9 @@ if (isBrowser) {
 
 // Re-export the Mocha class as default export
 export default Mocha;
+
+// Export the mocha instance (in browser, this has setup/run methods)
+export { mocha };
 
 // Re-export class/utility exports from the Mocha module
 export const {

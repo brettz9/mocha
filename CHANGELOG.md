@@ -1,5 +1,22 @@
 # Changelog
 
+## [12.0.0-beta-5](https://github.com/brettz9/mocha/compare/v12.0.0-beta-4...v12.0.0-beta-5) (2026-01-05)
+
+
+### 📚 Documentation
+
+* add missing /next/* redirects ([#5627](https://github.com/brettz9/mocha/issues/5627)) ([8fa183d](https://github.com/brettz9/mocha/commit/8fa183d592b29346901b55e2fa479c8f598a1ec3))
+
+
+### 🧹 Chores
+
+* cleanup issue templates ([#5624](https://github.com/brettz9/mocha/issues/5624)) ([1972dd7](https://github.com/brettz9/mocha/commit/1972dd76ec66e8e11532bb6aca9157c4f8892d3c))
+
+
+### 🤖 Automation
+
+* initial file implementation for ocotoguide ([#5608](https://github.com/brettz9/mocha/issues/5608)) ([a5f5c64](https://github.com/brettz9/mocha/commit/a5f5c6442505069573a17798a515f267c24a38f3))
+
 ## [12.0.0-beta-4](https://github.com/mochajs/mocha/compare/v12.0.0-beta-3...v12.0.0-beta-4) (2026-01-04)
 
 
